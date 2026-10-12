@@ -1,0 +1,12 @@
+import { readFileSync } from 'node:fs';
+const src = readFileSync('client.js', 'utf8');
+const START = 'const CSS = `'.length;
+const at = src.indexOf('const CSS = `');
+const after = src.slice(at);
+const bodyEnd = after.indexOf('`', START);
+const css = after.slice(START, bodyEnd);
+const rest = src.slice(0, at) + src.slice(at + bodyEnd + 1);
+const styled = new Set([...css.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]));
+const used = new Set([...rest.matchAll(/ac-[a-z0-9-]+/g)].map((m) => m[0]));
+console.log('used 无规则:', [...used].filter((c) => !styled.has(c)).join(' '));
+console.log('规则无 used:', [...styled].filter((c) => !used.has(c)).join(' '));

@@ -1,0 +1,20 @@
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { parseCatalog } from '../lib/parse.js';
+
+const buf = readFileSync(new URL('../test/fixtures/public-apis-README.md', import.meta.url));
+const r = parseCatalog(buf.toString('utf8'));
+const out = [];
+out.push(`README bytes=${buf.length} sha256=${createHash('sha256').update(buf).digest('hex').slice(0, 16)}`);
+out.push(`entries JSON bytes=${Buffer.byteLength(JSON.stringify(r.entries))} 单条平均=${Math.round(Buffer.byteLength(JSON.stringify(r.entries)) / r.entries.length)}`);
+out.push(`url 带 # 锚=${r.entries.filter((e) => e.url.includes('#')).map((e) => `${e.line}:${e.url.slice(0, 60)}`).join(' | ') || 'none'}`);
+out.push(`url 带空格=${r.entries.filter((e) => /\s/.test(e.url)).length} url 带尾斜杠=${r.entries.filter((e) => e.url.endsWith('/')).length}`);
+out.push(`url 非 https=${r.entries.filter((e) => !e.url.startsWith('https://')).map((e) => e.url).join(' | ')}`);
+const maxCat = [...r.report.categories].sort((a, b) => b.count - a.count).slice(0, 3);
+out.push(`最大三类=${maxCat.map((c) => `${c.name}:${c.count}`).join(',')}`);
+out.push(`按类切 JSON 后最大行字节=${Math.max(...r.report.categories.map((c) => Buffer.byteLength(JSON.stringify(r.entries.filter((e) => e.category === c.name)))))}`);
+out.push(`desc 含竖线转义(\\|)=${r.entries.filter((e) => e.desc.includes('\\|')).length} desc 含反引号=${r.entries.filter((e) => e.desc.includes('`')).length}`);
+out.push(`分类含 & 或空格=${[...new Set(r.entries.map((e) => e.category))].filter((c) => /[& ]/.test(c)).length}`);
+out.push(`slug 段数分布=${JSON.stringify(r.entries.reduce((a, e) => { const n = e.slug.split('::').length; a[n] = (a[n] || 0) + 1; return a; }, {}))}`);
+out.push(`name 重名跨类（同名不同分类）=${(() => { const m = new Map(); for (const e of r.entries) m.set(e.name, (m.get(e.name) || 0) + 1); return [...m.entries()].filter(([, n]) => n > 1).length; })()}`);
+console.log(out.join('\n'));

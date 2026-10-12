@@ -1,0 +1,8 @@
+# 换行统一按 LF：仓库里存 LF、签出也写 LF。
+# 这台机器 git 的 core.autocrlf 会把 LF 换成 CRLF 落回工作区，
+# 而 fetch 层与判据都按字节算 sha（`createHash...update(CN_README,'utf8')`）——
+# 一次签出把 \r 塞进 README 表格，sha 就不是那个 sha，界面上「快照取自哪一版」跟着说谎。
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.gif binary

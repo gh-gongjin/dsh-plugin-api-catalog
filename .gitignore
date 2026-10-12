@@ -1,0 +1,14 @@
+# 本机走查痕迹：无头浏览器 profile、库存备份、截图与读数字。
+# 里面是这台机器上的真实数据（宿主库存、填过的云凭据缓存），一律不进仓库。
+tmp/*
+# 例外：tmp 下的 .mjs 脚本 —— lib/desc-zh.js 与 lib/usage.js 的构建期生成器、
+# 以及界面几何走查脚本，docs/design-spec.md 逐条指向它们，不在仓库里那些主张就断了。
+!tmp/*.mjs
+!tmp/usage/
+tmp/usage/*
+!tmp/usage/*.mjs
+
+node_modules/
+.workbuddy/
+.DS_Store
+Thumbs.db

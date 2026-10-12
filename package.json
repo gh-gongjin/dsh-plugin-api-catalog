@@ -1,0 +1,19 @@
+{
+  "name": "dsh-plugin-api-catalog",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DSH 免费 API 目录插件：目录源是 public-apis-cn（取不到时降级到 public-apis 英文原文），按分类本地存储、定时更新、可搜索、每条带用途说明。抓取全程只读 GET；现译出网只走登记的渠道域名。",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": { "default": "./client.js" },
+    "./package.json": "./package.json"
+  },
+  "files": ["index.js", "lib", "client.js", "cordis.yml", "prototype", "README.md", "LICENSE"],
+  "keywords": ["dsh", "dsh-plugin", "api", "public-apis", "catalog"],
+  "license": "MIT",
+  "dsh": {
+    "bundle": { "patch": "cordis.yml" },
+    "client": { "platform": "web", "immediately": true }
+  }
+}
